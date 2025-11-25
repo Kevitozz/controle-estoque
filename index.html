@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Controle de Estoque — Premium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="theme-light">
+
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3 id="modal-title">Confirmar</h3>
+      <p id="modal-text">Tem certeza?</p>
+      <div class="modal-buttons">
+        <button id="modal-cancel">Cancelar</button>
+        <button id="modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="edit-overlay" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h3>Editar Produto</h3>
+      <div class="form-grid" style="margin:0 0 10px 0;">
+        <div class="form-group"><label>Nome</label><input id="edit-nome" disabled></div>
+        <div class="form-group"><label>Categoria</label><input id="edit-categoria"></div>
+        <div class="form-group"><label>Fornecedor</label><input id="edit-fornecedor"></div>
+        <div class="form-group"><label>Quantidade mínima</label><input id="edit-quantidade_min" type="number" min="0"></div>
+        <div class="form-group"><label>Preço</label><input id="edit-preco" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="modal-buttons">
+        <button id="edit-cancel">Cancelar</button>
+        <button id="edit-save">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hamburger-container">
+    <button id="hamburger-btn" aria-label="Abrir menu">☰</button>
+
+    <div id="side-menu" class="side-menu hidden" role="navigation">
+      <h3>Menu</h3>
+
+      <div class="menu-section">
+        <h4>Navegação</h4>
+        <button class="menu-item" onclick="mostrarSecao('produtos')">Cadastro</button>
+        <button class="menu-item" onclick="mostrarSecao('movimentacoes')">Movimentações</button>
+        <button class="menu-item" onclick="mostrarSecao('estoque')">Estoque</button>
+        <button class="menu-item" onclick="mostrarSecao('relatorios')">Relatórios</button>
+      </div>
+
+      <div class="menu-section">
+        <h4>Tema</h4>
+        <button class="theme-btn" data-theme="claro">Claro</button>
+        <button class="theme-btn" data-theme="escuro">Escuro</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="top-area">
+    <h1>Controle de Estoque</h1>
+  </header>
+
+  <main>
+    <section id="produtos" class="section active">
+      <h2>Cadastro de Produtos</h2>
+      <div class="form-grid">
+        <div class="form-group"><label for="nome">Nome</label><input id="nome" autocomplete="off"></div>
+        <div class="form-group"><label for="categoria">Categoria</label><input id="categoria" autocomplete="off"></div>
+        <div class="form-group"><label for="fornecedor">Fornecedor</label><input id="fornecedor" autocomplete="off"></div>
+        <div class="form-group"><label for="quantidade">Quantidade</label><input id="quantidade" type="number" min="0"></div>
+        <div class="form-group"><label for="quantidade_min">Quantidade mínima</label><input id="quantidade_min" type="number" min="0"></div>
+        <div class="form-group"><label for="preco">Preço (R$)</label><input id="preco" type="number" step="0.01" min="0"></div>
+      </div>
+      <div class="actions"><button id="btn-cadastrar" onclick="adicionarProduto()">Cadastrar Produto</button></div>
+    </section>
+
+    <section id="movimentacoes" class="section">
+      <h2>Registrar Movimentação</h2>
+      <div class="form-grid">
+        <div class="form-group"><label for="produto">Produto</label><select id="produto"></select></div>
+        <div class="form-group"><label for="tipo_mov">Tipo</label><select id="tipo_mov"><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div>
+        <div class="form-group"><label for="qtd_mov">Quantidade</label><input id="qtd_mov" type="number" min="1"></div>
+      </div>
+      <div class="actions"><button onclick="registrarMovimentacao()">Registrar</button></div>
+      <h2 class="mt-large">Histórico</h2>
+      <table>
+        <thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th></tr></thead>
+        <tbody id="tabela-movimentacoes"></tbody>
+      </table>
+    </section>
+
+    <section id="estoque" class="section">
+      <h2>Estoque Completo</h2>
+      <table>
+        <thead><tr><th>Nome</th><th>Categoria</th><th>Fornecedor</th><th>Quantidade</th><th>Qtd Mín.</th><th>Preço</th><th>Ações</th></tr></thead>
+        <tbody id="tabela-estoque"></tbody>
+      </table>
+    </section>
+
+    <section id="relatorios" class="section">
+      <h2>Relatórios</h2>
+
+      <div class="form-grid" style="grid-template-columns:1fr;">
+        <div class="form-group">
+          <label>Resumo: Valor total do estoque</label>
+          <div id="relatorio-valor" style="padding:12px 14px; border-radius:8px; background:var(--input-bg); font-weight:700;"></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:18px">Produtos abaixo do mínimo</h3>
+      <table>
+        <thead><tr><th>Nome</th><th>Qtd</th><th>Qtd Mín.</th></tr></thead>
+        <tbody id="relatorio-baixo-estoque"></tbody>
+      </table>
+
+      <h3 style="margin-top:18px">Últimas movimentações</h3>
+      <table>
+        <thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Quantidade</th></tr></thead>
+        <tbody id="relatorio-movimentacoes"></tbody>
+      </table>
+      
+    </section>
+
+  </main>
+
+  <div id="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
